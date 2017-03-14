@@ -17,7 +17,9 @@
             android:text="新品"
             android:textColor="@color/main_botton_text_color"
             android:button="@null"
-            android:gravity="center_horizontal"/>
+            android:gravity="center_horizontal"
+            style="@style/menu_item_style"
+            android:checked="true"/>
         <RadioButton
             android:id="@+id/rbBoutique"
             android:layout_width="0dp"
@@ -27,7 +29,9 @@
             android:text="精选"
             android:textColor="@color/main_botton_text_color"
             android:button="@null"
-            android:gravity="center_horizontal"/>
+            android:gravity="center_horizontal"
+            style="@style/menu_item_style"
+            android:checked="false"/>
         <RadioButton
             android:id="@+id/rbCategory"
             android:layout_width="0dp"
@@ -37,7 +41,9 @@
             android:text="分类"
             android:textColor="@color/main_botton_text_color"
             android:button="@null"
-            android:gravity="center_horizontal"/>
+            android:gravity="center_horizontal"
+            style="@style/menu_item_style"
+            android:checked="false"/>
         <RadioButton
             android:id="@+id/rbCart"
             android:layout_width="0dp"
@@ -47,7 +53,9 @@
             android:text="购物车"
             android:textColor="@color/main_botton_text_color"
             android:button="@null"
-            android:gravity="center_horizontal"/>
+            android:gravity="center_horizontal"
+            style="@style/menu_item_style"
+            android:checked="false"/>
         <RadioButton
             android:id="@+id/rbContact"
             android:layout_width="0dp"
@@ -57,7 +65,9 @@
             android:text="个人中心"
             android:textColor="@color/main_botton_text_color"
             android:button="@null"
-            android:gravity="center_horizontal"/>
+            android:gravity="center_horizontal"
+            style="@style/menu_item_style"
+            android:checked="false"/>
     </RadioGroup>
     <FrameLayout
         android:id="@+id/layout_content"
