@@ -1,6 +1,7 @@
 package cn.ucai.fulicenter.ui.activity;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -11,6 +12,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.ui.fragment.BoutiqueFragment;
+import cn.ucai.fulicenter.ui.fragment.CartFragment;
+import cn.ucai.fulicenter.ui.fragment.CategoryFragment;
+import cn.ucai.fulicenter.ui.fragment.MeFragment;
 import cn.ucai.fulicenter.ui.fragment.NewGoodsFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,12 +42,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bind = ButterKnife.bind(this);
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.layout_content,new NewGoodsFragment()).commit();
     }
 
     public void onCheckedChange(View view) {
-
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        switch (view.getId()) {
+            case R.id.rbNewGoods:
+                transaction.replace(R.id.layout_content,new NewGoodsFragment()).commit();
+                break;
+            case R.id.rbBoutique:
+                transaction.replace(R.id.layout_content,new BoutiqueFragment()).commit();
+                break;
+            case R.id.rbCategory:
+                transaction.replace(R.id.layout_content,new CategoryFragment()).commit();
+                break;
+            case R.id.rbCart:
+                transaction.replace(R.id.layout_content,new CartFragment()).commit();
+                break;
+            case R.id.rbContact:
+                transaction.replace(R.id.layout_content,new MeFragment()).commit();
+                break;
+        }
     }
 
     @Override
