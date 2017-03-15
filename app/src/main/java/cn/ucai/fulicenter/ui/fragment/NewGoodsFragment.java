@@ -150,6 +150,17 @@ public class NewGoodsFragment extends Fragment {
         mrvNewGoods = (RecyclerView) layout.findViewById(R.id.rvNewGoods);
         mActivity = (MainActivity) getActivity();
         mLayoutManager = new GridLayoutManager(mActivity, I.COLUM_NUM);
+        // 设置页脚居中显示
+        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){
+            @Override
+            public int getSpanSize(int position) {
+                int viewType = mNewGoodsAdapter.getItemViewType(position);
+                if (viewType == 0) {
+                    return 2;
+                }
+                return 1;
+            }
+        });
         mrvNewGoods.setLayoutManager(mLayoutManager);
         mNewGoodsList = new ArrayList<>();
         mNewGoodsAdapter = new NewGoodsAdapter(mActivity, mNewGoodsList);
