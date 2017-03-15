@@ -2,6 +2,7 @@ package cn.ucai.fulicenter.ui.fragment;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -55,10 +56,16 @@ public class NewGoodsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_new_goods, container, false);
         initView(layout);
+        return layout;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        // 下载首页并设置监听
+        super.onActivityCreated(savedInstanceState);
         mPageId = 1;
         downloadNewGoodsList(mPageId,ACTION_DOWNLOAD);
         setListener();
-        return layout;
     }
 
     private void setListener() {
@@ -135,6 +142,10 @@ public class NewGoodsFragment extends Fragment {
     }
     private void initView(View layout) {
         mSrl = (SwipeRefreshLayout) layout.findViewById(R.id.srl);
+        mSrl.setColorSchemeColors(getResources().getColor(R.color.google_blue),
+                getResources().getColor(R.color.google_green),
+                getResources().getColor(R.color.google_red),
+                getResources().getColor(R.color.google_yellow));
         mtvRefreshHint = (TextView) layout.findViewById(R.id.tvRefreshHint);
         mrvNewGoods = (RecyclerView) layout.findViewById(R.id.rvNewGoods);
         mActivity = (MainActivity) getActivity();
