@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.model.bean.NewGoodsBean;
+import cn.ucai.fulicenter.model.utils.ImageLoader;
 
 /**
  * Created by LPP on 2017/3/15.
@@ -53,6 +54,7 @@ public class NewGoodsAdapter extends RecyclerView.Adapter {
         NewGoodsBean newGoods = newGoodsList.get(position);
         newGoodsHolder.tvGoodsName.setText(newGoods.getGoodsName());
         newGoodsHolder.tvGoodsPrice.setText(newGoods.getCurrencyPrice());
+        ImageLoader.downloadImg(context,newGoodsHolder.ivGoods,newGoods.getGoodsThumb());
     }
 
     @Override
