@@ -20,6 +20,7 @@ import cn.ucai.fulicenter.model.net.IBoutiqueModel;
 import cn.ucai.fulicenter.model.net.OnCompleteListener;
 import cn.ucai.fulicenter.model.utils.ResultUtils;
 import cn.ucai.fulicenter.ui.activity.MainActivity;
+import cn.ucai.fulicenter.ui.adapter.BoutiqueAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +30,7 @@ public class BoutiqueFragment extends Fragment {
     ArrayList<BoutiqueBean> mBoutiqueList;
     LinearLayoutManager mLayoutManager;
     int mPageId = 1;
+    BoutiqueAdapter mBoutiqueAdapter;
     MainActivity mActivity;
     IBoutiqueModel mBoutiqueModel;
     public BoutiqueFragment() {
@@ -52,7 +54,7 @@ public class BoutiqueFragment extends Fragment {
             @Override
             public void onSuccess(BoutiqueBean[] result) {
                 mBoutiqueList = ResultUtils.array2List(result);
-
+                mBoutiqueAdapter.initBoutiqueList(mBoutiqueList);
             }
 
             @Override
@@ -68,7 +70,7 @@ public class BoutiqueFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(mActivity);
         mrvBoutique.setLayoutManager(mLayoutManager);
         mBoutiqueList = new ArrayList<>();
-
+        mBoutiqueAdapter = new BoutiqueAdapter(mActivity, mBoutiqueList);
+        mrvBoutique.setAdapter(mBoutiqueAdapter);
     }
-
 }

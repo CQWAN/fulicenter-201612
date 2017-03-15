@@ -26,6 +26,12 @@ public class BoutiqueAdapter extends RecyclerView.Adapter {
         this.boutiqueList = boutiqueList;
     }
 
+    public void initBoutiqueList(ArrayList<BoutiqueBean> mBoutiqueList) {
+        this.boutiqueList.clear();
+        this.boutiqueList.addAll(mBoutiqueList);
+        notifyDataSetChanged();
+    }
+
     class BoutiqueHolder extends RecyclerView.ViewHolder {
         ImageView ivBoutiqueImg;
         TextView tvBoutiqueTitle,tvBoutiqueName,tvBoutiqueDescription;
