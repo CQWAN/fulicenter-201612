@@ -3,6 +3,7 @@ package cn.ucai.fulicenter.model.utils;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -335,6 +336,7 @@ public class OkHttpUtils<T> {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                Log.e("main", "onFailure: " + e.getMessage() );
                 Message msg = Message.obtain();
                 msg.what = RESULT_ERROR;
                 msg.obj = e.getMessage();
@@ -343,6 +345,7 @@ public class OkHttpUtils<T> {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                Log.e("main", "onResponse: " + mClazz);
                 String json = response.body().string();
                 if(mClazz.equals(String.class)){
                     Message msg = Message.obtain();
