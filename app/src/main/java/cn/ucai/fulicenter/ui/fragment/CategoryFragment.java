@@ -4,6 +4,7 @@ package cn.ucai.fulicenter.ui.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,8 @@ import cn.ucai.fulicenter.model.bean.CategoryGroupBean;
 import cn.ucai.fulicenter.model.net.CategoryModel;
 import cn.ucai.fulicenter.model.net.ICategoryModel;
 import cn.ucai.fulicenter.model.net.OnCompleteListener;
+import cn.ucai.fulicenter.model.utils.ResultUtils;
+import cn.ucai.fulicenter.ui.adapter.CategoryAdatper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +33,7 @@ public class CategoryFragment extends Fragment {
     ExpandableListView elvCategory;
     List<CategoryGroupBean> mCategoryGroupList;
     List<List<CategoryChildBean>> mCategoryChildList;
+    CategoryAdatper mCategoryAdapter;
     Unbinder bind;
     ICategoryModel mCategoryModel;
     public CategoryFragment() {
@@ -58,12 +62,13 @@ public class CategoryFragment extends Fragment {
         mCategoryModel.loadGroupData(getActivity(), new OnCompleteListener<CategoryGroupBean[]>() {
             @Override
             public void onSuccess(CategoryGroupBean[] result) {
-
+                mCategoryGroupList = ResultUtils.array2List(result);
+                mCategoryAdapter = new CategoryAdatper(getActivity(), mCategoryGroupList, null);
             }
 
             @Override
             public void onError(String error) {
-
+                Log.i("main", error);
             }
         });
     }

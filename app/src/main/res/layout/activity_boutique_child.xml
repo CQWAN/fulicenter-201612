@@ -19,7 +19,7 @@
             android:layout_toRightOf="@id/ivBack"
             android:layout_marginLeft="15dp"
             android:text="这是我的选择"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:layout_centerVertical="true"/>
     </RelativeLayout>
     <FrameLayout

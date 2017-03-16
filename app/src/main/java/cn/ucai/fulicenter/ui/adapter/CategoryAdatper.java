@@ -62,6 +62,7 @@ public class CategoryAdatper extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+
         return null;
     }
 
