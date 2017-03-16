@@ -106,7 +106,7 @@ public class NewGoodsAdapter extends RecyclerView.Adapter {
             @Override
             public void onClick(View v) {
                 context.startActivity(new Intent(context, GoodsDetailsActivity.class)
-                .putExtra(I.GoodsDetails.KEY_GOODS_ID,newGoods.getId()));
+                .putExtra(I.Goods.KEY_GOODS_ID,newGoods.getGoodsId()));
             }
         });
     }

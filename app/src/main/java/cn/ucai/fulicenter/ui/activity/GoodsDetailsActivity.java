@@ -21,7 +21,7 @@ public class GoodsDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goods_details);
         initView();
-        goodsId = getIntent().getIntExtra(I.GoodsDetails.KEY_GOODS_ID, 0);
+        goodsId = getIntent().getIntExtra(I.Goods.KEY_GOODS_ID, 0);
         initData();
     }
 
@@ -37,17 +37,18 @@ public class GoodsDetailsActivity extends AppCompatActivity {
         mGoodsDetailsModel.loadData(this, goodsId, new OnCompleteListener<GoodsDetailsBean>() {
             @Override
             public void onSuccess(GoodsDetailsBean result) {
-                // 成功后显示数据
-                String goodsEnglishName = result.getGoodsEnglishName();
-                mtvGoodsEnglishName.setText(goodsEnglishName);
-                String goodsName = result.getGoodsName();
-                mtvGoodsName.setText(goodsName);
-                String currencyPrice = result.getCurrencyPrice();
-                mtvCurrencyPrice.setText(currencyPrice);
-                String promotePrice = result.getPromotePrice();
-                mtvPromotePrice.setText(promotePrice);
+                if (result != null) {
+                    // 成功后显示数据
+                    String goodsEnglishName = result.getGoodsEnglishName();
+                    mtvGoodsEnglishName.setText(goodsEnglishName);
+                    String goodsName = result.getGoodsName();
+                    mtvGoodsName.setText(goodsName);
+                    String currencyPrice = result.getCurrencyPrice();
+                    mtvCurrencyPrice.setText(currencyPrice);
+                    String promotePrice = result.getPromotePrice();
+                    mtvPromotePrice.setText(promotePrice);
+                }
             }
-
             @Override
             public void onError(String error) {
                 Log.e("main", error);
