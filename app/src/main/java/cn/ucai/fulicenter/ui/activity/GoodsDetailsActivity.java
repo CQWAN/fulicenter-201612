@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.I;
@@ -47,6 +48,8 @@ public class GoodsDetailsActivity extends AppCompatActivity {
                     mtvCurrencyPrice.setText(currencyPrice);
                     String promotePrice = result.getPromotePrice();
                     mtvPromotePrice.setText(promotePrice);
+                } else {
+                    Toast.makeText(GoodsDetailsActivity.this, "数据加载失败", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
