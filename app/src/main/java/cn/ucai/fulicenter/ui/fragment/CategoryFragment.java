@@ -26,14 +26,12 @@ import cn.ucai.fulicenter.model.net.OnCompleteListener;
  * A simple {@link Fragment} subclass.
  */
 public class CategoryFragment extends Fragment {
-
-
     @BindView(R.id.elvCategory)
     ExpandableListView elvCategory;
-    Unbinder bind;
-    ICategoryModel mCategoryModel;
     List<CategoryGroupBean> mCategoryGroupList;
     List<List<CategoryChildBean>> mCategoryChildList;
+    Unbinder bind;
+    ICategoryModel mCategoryModel;
     public CategoryFragment() {
         // Required empty public constructor
     }
@@ -53,17 +51,14 @@ public class CategoryFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mCategoryModel = new CategoryModel();
-        downLoadCategory();
+        downloadGroupCategory();
     }
 
-    private void downLoadCategory() {
-        downLoadGroupCategory();
-    }
-    private void downLoadGroupCategory() {
+    private void downloadGroupCategory() {
         mCategoryModel.loadGroupData(getActivity(), new OnCompleteListener<CategoryGroupBean[]>() {
             @Override
             public void onSuccess(CategoryGroupBean[] result) {
-                downLoadChildCategory(1);
+
             }
 
             @Override
@@ -72,9 +67,20 @@ public class CategoryFragment extends Fragment {
             }
         });
     }
-    private void downLoadChildCategory(int parendId) {
+    private void downloadChildCategory(int parentId){
+        mCategoryModel.loadChildData(getActivity(), parentId, new OnCompleteListener<CategoryChildBean[]>() {
+            @Override
+            public void onSuccess(CategoryChildBean[] result) {
 
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
