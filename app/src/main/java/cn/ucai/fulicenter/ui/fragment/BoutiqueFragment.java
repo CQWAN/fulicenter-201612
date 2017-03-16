@@ -47,6 +47,8 @@ public class BoutiqueFragment extends Fragment {
         return layout;
     }
 
+
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

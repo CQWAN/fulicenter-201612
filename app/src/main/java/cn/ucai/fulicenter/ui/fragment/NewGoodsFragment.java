@@ -23,7 +23,6 @@ import cn.ucai.fulicenter.model.net.NewGoodsModel;
 import cn.ucai.fulicenter.model.net.OnCompleteListener;
 import cn.ucai.fulicenter.model.utils.ImageLoader;
 import cn.ucai.fulicenter.model.utils.ResultUtils;
-import cn.ucai.fulicenter.ui.activity.MainActivity;
 import cn.ucai.fulicenter.ui.adapter.NewGoodsAdapter;
 import cn.ucai.fulicenter.ui.view.SpaceItemDecoration;
 
@@ -40,7 +39,6 @@ public class NewGoodsFragment extends Fragment {
     ArrayList<NewGoodsBean> mNewGoodsList;
     GridLayoutManager mLayoutManager;
     int mPageId = 1;
-    MainActivity mActivity;
     NewGoodsAdapter mNewGoodsAdapter;
     INewGoodsModel mNewGoodsModel = new NewGoodsModel();
 
@@ -58,11 +56,13 @@ public class NewGoodsFragment extends Fragment {
         initView(layout);
         return layout;
     }
-
+    int catId = 0;
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         // 下载首页并设置监听
         super.onActivityCreated(savedInstanceState);
+        catId = getActivity().getIntent().getIntExtra(I.Boutique.CAT_ID,catId);
+        Log.e("main", catId+"");
         mPageId = 1;
         downloadNewGoodsList(mPageId,ACTION_DOWNLOAD);
         setListener();
@@ -101,9 +101,8 @@ public class NewGoodsFragment extends Fragment {
             }
         });
     }
-
     private void downloadNewGoodsList(int mPageId, final int action) {
-        mNewGoodsModel.loadData(mActivity, mPageId, new OnCompleteListener<NewGoodsBean[]>() {
+        mNewGoodsModel.loadData(getActivity(), catId,mPageId, new OnCompleteListener<NewGoodsBean[]>() {
             @Override
             public void onSuccess(NewGoodsBean[] result) {
                 mNewGoodsAdapter.setMore(result != null && result.length > 0);
@@ -148,8 +147,7 @@ public class NewGoodsFragment extends Fragment {
                 getResources().getColor(R.color.google_yellow));
         mtvRefreshHint = (TextView) layout.findViewById(R.id.tvRefreshHint);
         mrvNewGoods = (RecyclerView) layout.findViewById(R.id.rvNewGoods);
-        mActivity = (MainActivity) getActivity();
-        mLayoutManager = new GridLayoutManager(mActivity, I.COLUM_NUM);
+        mLayoutManager = new GridLayoutManager(getActivity(), I.COLUM_NUM);
         // 设置页脚居中显示
         mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){
             @Override
@@ -163,7 +161,7 @@ public class NewGoodsFragment extends Fragment {
         });
         mrvNewGoods.setLayoutManager(mLayoutManager);
         mNewGoodsList = new ArrayList<>();
-        mNewGoodsAdapter = new NewGoodsAdapter(mActivity, mNewGoodsList);
+        mNewGoodsAdapter = new NewGoodsAdapter(getActivity(), mNewGoodsList);
         mrvNewGoods.setAdapter(mNewGoodsAdapter);
         mrvNewGoods.addItemDecoration(new SpaceItemDecoration(12));
     }
