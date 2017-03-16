@@ -1,6 +1,7 @@
 package cn.ucai.fulicenter.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +11,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.model.bean.NewGoodsBean;
 import cn.ucai.fulicenter.model.utils.ImageLoader;
+import cn.ucai.fulicenter.ui.activity.GoodsDetailsActivity;
 
 /**
  * Created by LPP on 2017/3/15.
@@ -95,10 +98,17 @@ public class NewGoodsAdapter extends RecyclerView.Adapter {
             return;
         }
         NewGoodsHolder newGoodsHolder = (NewGoodsHolder) holder;
-        NewGoodsBean newGoods = newGoodsList.get(position);
+        final NewGoodsBean newGoods = newGoodsList.get(position);
         newGoodsHolder.tvGoodsName.setText(newGoods.getGoodsName());
         newGoodsHolder.tvGoodsPrice.setText(newGoods.getCurrencyPrice());
         ImageLoader.downloadImg(context,newGoodsHolder.ivGoods,newGoods.getGoodsThumb());
+        newGoodsHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                context.startActivity(new Intent(context, GoodsDetailsActivity.class)
+                .putExtra(I.GoodsDetails.KEY_GOODS_ID,newGoods.getId()));
+            }
+        });
     }
 
     @Override
