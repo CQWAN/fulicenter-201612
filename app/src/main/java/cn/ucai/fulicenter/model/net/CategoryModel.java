@@ -23,7 +23,7 @@ public class CategoryModel implements ICategoryModel {
     public void loadChildData(Context context, int parentId, OnCompleteListener<CategoryChildBean[]> onCompleteListener) {
         OkHttpUtils<CategoryChildBean[]> okHttpUtils = new OkHttpUtils<>(context);
         okHttpUtils.setRequestUrl(I.REQUEST_FIND_CATEGORY_CHILDREN)
-                .addParam(I.CategoryGroup.ID,String.valueOf(parentId))
+                .addParam(I.CategoryChild.PARENT_ID,String.valueOf(parentId))
                 .targetClass(CategoryChildBean[].class)
                 .execute(onCompleteListener);
     }

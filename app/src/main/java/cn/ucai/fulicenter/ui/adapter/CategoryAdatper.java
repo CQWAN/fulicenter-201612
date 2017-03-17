@@ -1,6 +1,7 @@
 package cn.ucai.fulicenter.ui.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
@@ -27,10 +28,14 @@ public class CategoryAdatper extends BaseExpandableListAdapter {
         this.context = context;
         this.categoryGroupList = categoryGroupList;
         this.categoryChildList = categoryChildList;
+        notifyDataSetChanged();
+        Log.d("mingYue", "CategoryAdatper: " + categoryGroupList.toString());
+        Log.d("mingYue", "CategoryAdatper: " + categoryChildList.toString());
     }
 
     @Override
     public int getGroupCount() {
+        Log.d("mingYue", "getGroupCount: " + categoryGroupList.size());
         return categoryGroupList.size();
     }
 
@@ -87,6 +92,13 @@ public class CategoryAdatper extends BaseExpandableListAdapter {
         }
         return convertView;
     }
+
+    public void initData(List<CategoryGroupBean> mCategoryGroupList, List<List<CategoryChildBean>> mCategoryChildList) {
+        categoryGroupList.addAll(mCategoryGroupList);
+        categoryChildList.addAll(mCategoryChildList);
+        notifyDataSetChanged();
+    }
+
     class GroupHolder{
         ImageView ivCategoryGroup;
         TextView tvCategoryGroup;

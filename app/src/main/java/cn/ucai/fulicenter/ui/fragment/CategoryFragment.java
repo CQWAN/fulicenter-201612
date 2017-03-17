@@ -57,13 +57,18 @@ public class CategoryFragment extends Fragment {
         mCategoryModel = new CategoryModel();
         downloadGroupCategory();
     }
-
     private void downloadGroupCategory() {
         mCategoryModel.loadGroupData(getActivity(), new OnCompleteListener<CategoryGroupBean[]>() {
             @Override
             public void onSuccess(CategoryGroupBean[] result) {
                 mCategoryGroupList = ResultUtils.array2List(result);
-                mCategoryAdapter = new CategoryAdatper(getActivity(), mCategoryGroupList, null);
+                for(int i=0;i<mCategoryGroupList.size();i++) {
+                    int parendId = mCategoryGroupList.get(i).getId();
+                    mCategoryChildList.set(i,new ArrayList<CategoryChildBean>());
+                    downloadChildCategory(parendId, i);
+                }
+                mCategoryAdapter = new CategoryAdatper(getActivity(), mCategoryGroupList, mCategoryChildList);
+                elvCategory.setAdapter(mCategoryAdapter);
             }
 
             @Override
@@ -72,16 +77,16 @@ public class CategoryFragment extends Fragment {
             }
         });
     }
-    private void downloadChildCategory(int parentId){
+    private void downloadChildCategory(int parentId, final int index){
         mCategoryModel.loadChildData(getActivity(), parentId, new OnCompleteListener<CategoryChildBean[]>() {
             @Override
             public void onSuccess(CategoryChildBean[] result) {
-
+                ArrayList<CategoryChildBean> categoryChildList = ResultUtils.array2List(result);
+                mCategoryChildList.set(index, categoryChildList);
             }
-
             @Override
             public void onError(String error) {
-
+                Log.i("main", error);
             }
         });
     }
