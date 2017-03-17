@@ -1,6 +1,7 @@
 package cn.ucai.fulicenter.ui.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,12 +18,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.model.bean.CategoryChildBean;
 import cn.ucai.fulicenter.model.bean.CategoryGroupBean;
 import cn.ucai.fulicenter.model.net.CategoryModel;
 import cn.ucai.fulicenter.model.net.ICategoryModel;
 import cn.ucai.fulicenter.model.net.OnCompleteListener;
 import cn.ucai.fulicenter.model.utils.ResultUtils;
+import cn.ucai.fulicenter.ui.activity.CategoryChildActivity;
 import cn.ucai.fulicenter.ui.adapter.CategoryAdatper;
 
 /**
@@ -48,9 +51,22 @@ public class CategoryFragment extends Fragment {
         bind = ButterKnife.bind(this, layout);
         mCategoryGroupList = new ArrayList<>();
         mCategoryChildList = new ArrayList<>();
+        setListener();
         return layout;
     }
 
+    private void setListener() {
+        elvCategory.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                CategoryChildBean categoryChildBean = mCategoryChildList.get(groupPosition).get(childPosition);
+                Log.d("mingYue", "onChildClick: " + categoryChildBean.getId() + ", " + categoryChildBean.getParentId());
+                getActivity().startActivity(new Intent(getActivity(),CategoryChildActivity.class)
+                .putExtra(I.CategoryChild.CAT_ID,mCategoryChildList.get(groupPosition).get(childPosition).getId()));
+                return false;
+            }
+        });
+    }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -64,7 +80,8 @@ public class CategoryFragment extends Fragment {
                 mCategoryGroupList = ResultUtils.array2List(result);
                 for(int i=0;i<mCategoryGroupList.size();i++) {
                     int parendId = mCategoryGroupList.get(i).getId();
-                    downloadChildCategory(parendId);
+                    mCategoryChildList.add(new ArrayList<CategoryChildBean>());
+                    downloadChildCategory(parendId,i);
                 }
                 elvCategory.setGroupIndicator(null);
                 mCategoryAdapter = new CategoryAdatper(getActivity(), mCategoryGroupList, mCategoryChildList);
@@ -77,14 +94,13 @@ public class CategoryFragment extends Fragment {
             }
         });
     }
-    private void downloadChildCategory(int parentId){
+    private void downloadChildCategory(int parentId, final int index){
         mCategoryModel.loadChildData(getActivity(), parentId, new OnCompleteListener<CategoryChildBean[]>() {
             @Override
             public void onSuccess(CategoryChildBean[] result) {
                 ArrayList<CategoryChildBean> categoryChildList = ResultUtils.array2List(result);
-                mCategoryChildList.add(categoryChildList);
+                mCategoryChildList.set(index,categoryChildList);
             }
-
             @Override
             public void onError(String error) {
                 Log.i("main", error);

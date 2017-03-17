@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bind = ButterKnife.bind(this);
+        getSupportFragmentManager().beginTransaction().replace(R.id.layout_content,new NewGoodsFragment()).commit();
     }
 
     public void onCheckedChange(View view) {
