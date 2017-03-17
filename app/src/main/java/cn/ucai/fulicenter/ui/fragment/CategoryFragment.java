@@ -64,9 +64,9 @@ public class CategoryFragment extends Fragment {
                 mCategoryGroupList = ResultUtils.array2List(result);
                 for(int i=0;i<mCategoryGroupList.size();i++) {
                     int parendId = mCategoryGroupList.get(i).getId();
-                    mCategoryChildList.set(i,new ArrayList<CategoryChildBean>());
-                    downloadChildCategory(parendId, i);
+                    downloadChildCategory(parendId);
                 }
+                elvCategory.setGroupIndicator(null);
                 mCategoryAdapter = new CategoryAdatper(getActivity(), mCategoryGroupList, mCategoryChildList);
                 elvCategory.setAdapter(mCategoryAdapter);
             }
@@ -77,13 +77,14 @@ public class CategoryFragment extends Fragment {
             }
         });
     }
-    private void downloadChildCategory(int parentId, final int index){
+    private void downloadChildCategory(int parentId){
         mCategoryModel.loadChildData(getActivity(), parentId, new OnCompleteListener<CategoryChildBean[]>() {
             @Override
             public void onSuccess(CategoryChildBean[] result) {
                 ArrayList<CategoryChildBean> categoryChildList = ResultUtils.array2List(result);
-                mCategoryChildList.set(index, categoryChildList);
+                mCategoryChildList.add(categoryChildList);
             }
+
             @Override
             public void onError(String error) {
                 Log.i("main", error);
