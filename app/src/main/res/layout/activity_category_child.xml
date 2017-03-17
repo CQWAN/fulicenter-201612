@@ -2,26 +2,41 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#ff6600">
-        <ImageView
-            android:id="@+id/ivBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/back"/>
+        android:background="#ff6600"
+        android:orientation="horizontal">
         <TextView
-            android:id="@+id/tvMySelect"
+            android:id="@+id/tvChildGoodsPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/ivBack"
-            android:layout_marginLeft="15dp"
-            android:text="这是我的选择"
-            android:textSize="20sp"
-            android:layout_centerVertical="true"/>
-    </RelativeLayout>
+            android:text="价格"
+            android:textSize="30sp"
+            android:layout_marginLeft="50dp"/>
+        <ImageView
+            android:id="@+id/ivChildGoodsPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/arrow_order_up"
+            android:layout_marginLeft="30dp"
+            android:layout_gravity="center_vertical"/>
+        <TextView
+            android:id="@+id/tvChildGoodsTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="上架时间"
+            android:textSize="30sp"
+            android:layout_marginLeft="80dp"/>
+        <ImageView
+            android:id="@+id/ivChildGoodsTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/arrow_order_up"
+            android:layout_marginLeft="30dp"
+            android:layout_gravity="center_vertical"/>
+    </LinearLayout>
     <FrameLayout
         android:id="@+id/layout_content"
         android:layout_width="match_parent"

@@ -39,7 +39,7 @@ public class NewGoodsFragment extends Fragment {
     ArrayList<NewGoodsBean> mNewGoodsList;
     GridLayoutManager mLayoutManager;
     int mPageId = 1;
-    NewGoodsAdapter mNewGoodsAdapter;
+    public NewGoodsAdapter mNewGoodsAdapter;
     INewGoodsModel mNewGoodsModel = new NewGoodsModel();
 
 

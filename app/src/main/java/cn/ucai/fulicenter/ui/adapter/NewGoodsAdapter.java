@@ -114,7 +114,7 @@ public class NewGoodsAdapter extends RecyclerView.Adapter {
         });
     }
 
-    private void sortBy(int sortType) {
+    public void sortBy(int sortType) {
         switch (sortType) {
             case I.SORT_BY_ADDTIME_DESC:
                 Collections.sort(newGoodsList, new Comparator<NewGoodsBean>() {
@@ -151,6 +151,7 @@ public class NewGoodsAdapter extends RecyclerView.Adapter {
                 });
                 break;
         }
+        notifyDataSetChanged();
     }
     @Override
     public int getItemCount() {
