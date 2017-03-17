@@ -59,8 +59,6 @@ public class CategoryFragment extends Fragment {
         elvCategory.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                CategoryChildBean categoryChildBean = mCategoryChildList.get(groupPosition).get(childPosition);
-                Log.d("mingYue", "onChildClick: " + categoryChildBean.getId() + ", " + categoryChildBean.getParentId());
                 getActivity().startActivity(new Intent(getActivity(),CategoryChildActivity.class)
                 .putExtra(I.CategoryChild.CAT_ID,mCategoryChildList.get(groupPosition).get(childPosition).getId()));
                 return false;

@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.I;
@@ -23,6 +25,7 @@ import cn.ucai.fulicenter.ui.activity.GoodsDetailsActivity;
 public class NewGoodsAdapter extends RecyclerView.Adapter {
     static final int TYPE_FOOTER = 0;
     static final int TYPE_ITEM = 1;
+
     Context context;
     ArrayList<NewGoodsBean> newGoodsList;
     public NewGoodsAdapter(Context context, ArrayList<NewGoodsBean> newGoodsList) {
@@ -111,6 +114,44 @@ public class NewGoodsAdapter extends RecyclerView.Adapter {
         });
     }
 
+    private void sortBy(int sortType) {
+        switch (sortType) {
+            case I.SORT_BY_ADDTIME_DESC:
+                Collections.sort(newGoodsList, new Comparator<NewGoodsBean>() {
+                    @Override
+                    public int compare(NewGoodsBean o1, NewGoodsBean o2) {
+                        return (int) (o2.getAddTime()-o1.getAddTime());
+                    }
+                });
+                break;
+            case I.SORT_BY_ADDTIME_ASC:
+                Collections.sort(newGoodsList, new Comparator<NewGoodsBean>() {
+                    @Override
+                    public int compare(NewGoodsBean o1, NewGoodsBean o2) {
+                        return (int) (o1.getAddTime()-o2.getAddTime());
+                    }
+                });
+                break;
+            case I.SORT_BY_PRICE_DESC:
+                Collections.sort(newGoodsList, new Comparator<NewGoodsBean>() {
+                    @Override
+                    public int compare(NewGoodsBean o1, NewGoodsBean o2) {
+                        return Integer.parseInt(o2.getCurrencyPrice().substring(o2.getCurrencyPrice().indexOf("￥"+1)))
+                                -Integer.parseInt(o1.getCurrencyPrice().substring(o2.getCurrencyPrice().indexOf("￥"+1)));
+                    }
+                });
+                break;
+            case I.SORT_BY_PRICE_ASC:
+                Collections.sort(newGoodsList, new Comparator<NewGoodsBean>() {
+                    @Override
+                    public int compare(NewGoodsBean o1, NewGoodsBean o2) {
+                        return Integer.parseInt(o1.getCurrencyPrice().substring(o1.getCurrencyPrice().indexOf("￥"+1)))
+                                -Integer.parseInt(o2.getCurrencyPrice().substring(o2.getCurrencyPrice().indexOf("￥"+1)));
+                    }
+                });
+                break;
+        }
+    }
     @Override
     public int getItemCount() {
         return newGoodsList.size()+1;
