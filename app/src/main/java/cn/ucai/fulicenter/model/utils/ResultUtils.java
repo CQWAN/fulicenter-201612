@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import cn.ucai.fulicenter.application.I;
@@ -134,7 +133,7 @@ public class ResultUtils {
         return list;
     }
 
-    public static <T> Result getListResultFromJson(String jsonStr, Class<T> clazz){
+    public static <T> Result getListResultFromJson(String jsonStr,Class<T> clazz){
         Result result = new Result();
         Log.e("Utils","jsonStr="+jsonStr);
         try {
@@ -180,11 +179,6 @@ public class ResultUtils {
             e.printStackTrace();
         }
         return  null;
-    }
-    public static <T>  ArrayList<T> array2List(T[] array) {
-        List<T> list = Arrays.asList(array);
-        ArrayList<T> arrayList = new ArrayList<>(list);
-        return arrayList;
     }
 
 }

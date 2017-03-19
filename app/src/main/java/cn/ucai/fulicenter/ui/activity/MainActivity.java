@@ -1,74 +1,173 @@
 package cn.ucai.fulicenter.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.FuLiCenterApplication;
+import cn.ucai.fulicenter.application.I;
+import cn.ucai.fulicenter.model.utils.L;
 import cn.ucai.fulicenter.ui.fragment.BoutiqueFragment;
-import cn.ucai.fulicenter.ui.fragment.CartFragment;
 import cn.ucai.fulicenter.ui.fragment.CategoryFragment;
-import cn.ucai.fulicenter.ui.fragment.MeFragment;
 import cn.ucai.fulicenter.ui.fragment.NewGoodsFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
+    private static final String TAG = MainActivity.class.getSimpleName();
 
-    @BindView(R.id.rbNewGoods)
-    RadioButton mrbNewGoods;
-    @BindView(R.id.rbBoutique)
-    RadioButton mrbBoutique;
-    @BindView(R.id.rbCategory)
-    RadioButton mrbCategory;
-    @BindView(R.id.rbCart)
-    RadioButton mrbCart;
-    @BindView(R.id.rbContact)
-    RadioButton mrbContact;
-    @BindView(R.id.rgMenu)
-    RadioGroup mrgMenu;
-    @BindView(R.id.layout_content)
-    FrameLayout mlayoutContent;
-    Unbinder bind;
+    @BindView(R.id.layout_new_good)
+    RadioButton mLayoutNewGood;
+    @BindView(R.id.layout_boutique)
+    RadioButton mLayoutBoutique;
+    @BindView(R.id.layout_category)
+    RadioButton mLayoutCategory;
+    @BindView(R.id.layout_cart)
+    RadioButton mLayoutCart;
+    @BindView(R.id.tvCartHint)
+    TextView mTvCartHint;
+    @BindView(R.id.layout_personal_center)
+    RadioButton mLayoutPersonalCenter;
 
+    int index;
+    int currentIndex;
+    RadioButton[] rbs;
+    Fragment[] mFragments;
+    NewGoodsFragment mNewGoodsFragment;
+    BoutiqueFragment mBoutiqueFragment;
+    CategoryFragment mCategoryFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bind = ButterKnife.bind(this);
-        getSupportFragmentManager().beginTransaction().replace(R.id.layout_content,new NewGoodsFragment()).commit();
+        ButterKnife.bind(this);
+        L.i("MainActivity onCreate");
+        super.onCreate(savedInstanceState);
     }
 
-    public void onCheckedChange(View view) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        switch (view.getId()) {
-            case R.id.rbNewGoods:
-                transaction.replace(R.id.layout_content,new NewGoodsFragment()).commit();
-                break;
-            case R.id.rbBoutique:
-                transaction.replace(R.id.layout_content,new BoutiqueFragment()).commit();
-                break;
-            case R.id.rbCategory:
-                transaction.replace(R.id.layout_content,new CategoryFragment()).commit();
-                break;
-            case R.id.rbCart:
-                transaction.replace(R.id.layout_content,new CartFragment()).commit();
-                break;
-            case R.id.rbContact:
-                transaction.replace(R.id.layout_content,new MeFragment()).commit();
-                break;
-        }
+    private void initFragment() {
+        mFragments = new Fragment[3];
+        mNewGoodsFragment = new NewGoodsFragment();
+        mBoutiqueFragment = new BoutiqueFragment();
+        mCategoryFragment = new CategoryFragment();
+//        mCartFragment = new CartFragment();
+        mFragments[0] = mNewGoodsFragment;
+        mFragments[1] = mBoutiqueFragment;
+        mFragments[2] = mCategoryFragment;
+//        mFragments[3] = mCartFragment;
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragment_container,mNewGoodsFragment)
+//                .add(R.id.fragment_container,mBoutiqueFragment)
+//                .add(R.id.fragment_container,mCategoryFragment)
+//                .hide(mBoutiqueFragment)
+//                .hide(mCategoryFragment)
+                .show(mNewGoodsFragment)
+                .commit();
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        bind.unbind();
+    protected void initView() {
+        rbs = new RadioButton[3];
+        rbs[0] = mLayoutNewGood;
+        rbs[1] = mLayoutBoutique;
+        rbs[2] = mLayoutCategory;
+//        rbs[3] = mLayoutCart;
+//        rbs[4] = mLayoutPersonalCenter;
+    }
+
+    @Override
+    protected void initData() {
+        initFragment();
+    }
+
+    @Override
+    protected void setListener() {
+
+    }
+
+    public void onCheckedChange(View v) {
+        switch (v.getId()){
+            case R.id.layout_new_good:
+                index = 0;
+                break;
+            case R.id.layout_boutique:
+                index = 1;
+                break;
+            case R.id.layout_category:
+                index = 2;
+                break;
+            /*case R.id.layout_cart:
+                        if(FuLiCenterApplication.getUser()==null){
+                            MFGT.gotoLoginFromCart(this);
+                        }else {
+                            index = 3;
+                        }
+                        break;
+                    case R.id.layout_personal_center:
+                        if(FuLiCenterApplication.getUser()==null){
+                            MFGT.gotoLogin(this);
+                }else {
+                    index = 4;
+                }
+                break;*/
+        }
+        setFragment();
+    }
+
+    private void setFragment() {
+        if(index!=currentIndex) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.hide(mFragments[currentIndex]);
+            if(!mFragments[index].isAdded()){
+                ft.add(R.id.fragment_container,mFragments[index]);
+            }
+            ft.show(mFragments[index]).commit();
+        }
+        setRadioButtonStatus();
+        currentIndex = index;
+    }
+
+    private void setRadioButtonStatus() {
+        L.e("index="+index);
+        for (int i=0;i<rbs.length;i++){
+            if(i==index){
+                rbs[i].setChecked(true);
+            }else{
+                rbs[i].setChecked(false);
+            }
+        }
+    }
+    public void onBackPressed(){
+        finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        L.e(TAG,"onResume...");
+        if(index == 4 && FuLiCenterApplication.getUser()==null){
+            index = 0;
+        }
+        setFragment();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        L.e(TAG,"onActivityResult,requestCode="+requestCode);
+        if(FuLiCenterApplication.getUser()!=null){
+            if(requestCode == I.REQUEST_CODE_LOGIN) {
+                index = 4;
+            }
+            if(requestCode == I.REQUEST_CODE_LOGIN_FROM_CART){
+                index = 3;
+            }
+        }
     }
 }

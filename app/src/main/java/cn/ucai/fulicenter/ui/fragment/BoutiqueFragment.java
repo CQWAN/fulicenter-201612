@@ -1,76 +1,110 @@
 package cn.ucai.fulicenter.ui.fragment;
 
-
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.model.bean.BoutiqueBean;
-import cn.ucai.fulicenter.model.net.BoutiqueModel;
-import cn.ucai.fulicenter.model.net.IBoutiqueModel;
-import cn.ucai.fulicenter.model.net.OnCompleteListener;
-import cn.ucai.fulicenter.model.utils.ResultUtils;
+import cn.ucai.fulicenter.model.net.NetDao;
+import cn.ucai.fulicenter.model.utils.CommonUtils;
+import cn.ucai.fulicenter.model.utils.ConvertUtils;
+import cn.ucai.fulicenter.model.utils.L;
+import cn.ucai.fulicenter.model.utils.OkHttpUtils;
 import cn.ucai.fulicenter.ui.activity.MainActivity;
 import cn.ucai.fulicenter.ui.adapter.BoutiqueAdapter;
-
-/**
- * A simple {@link Fragment} subclass.
- */
-public class BoutiqueFragment extends Fragment {
-    RecyclerView mrvBoutique;
-    ArrayList<BoutiqueBean> mBoutiqueList;
-    LinearLayoutManager mLayoutManager;
-    int mPageId = 1;
-    BoutiqueAdapter mBoutiqueAdapter;
-    MainActivity mActivity;
-    IBoutiqueModel mBoutiqueModel;
-    public BoutiqueFragment() {
-        // Required empty public constructor
-    }
+import cn.ucai.fulicenter.ui.view.SpaceItemDecoration;
 
 
+public class BoutiqueFragment extends BaseFragment {
+    @BindView(R.id.tv_refresh)
+    TextView mTvRefresh;
+    @BindView(R.id.rv)
+    RecyclerView mRv;
+    @BindView(R.id.srl)
+    SwipeRefreshLayout mSrl;
+    LinearLayoutManager llm;
+    MainActivity mContext;
+    BoutiqueAdapter mAdapter;
+    ArrayList<BoutiqueBean> mList;
+
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.fragment_boutique, container, false);
-        initView(layout);
-        mBoutiqueModel = new BoutiqueModel();
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View layout = inflater.inflate(R.layout.fragment_newgoods, container, false);
+        ButterKnife.bind(this, layout);
+        mContext = (MainActivity) getContext();
+        mList = new ArrayList<>();
+        mAdapter = new BoutiqueAdapter(mContext,mList);
+        super.onCreateView(inflater,container,savedInstanceState);
         return layout;
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mBoutiqueModel.loadData(mActivity, new OnCompleteListener<BoutiqueBean[]>() {
-            @Override
-            public void onSuccess(BoutiqueBean[] result) {
-                mBoutiqueList = ResultUtils.array2List(result);
-                mBoutiqueAdapter.initBoutiqueList(mBoutiqueList);
-            }
+    protected void setListener() {
+        setPullDownListener();
+    }
 
+    private void setPullDownListener() {
+        mSrl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onError(String error) {
-                Log.e("main", error);
+            public void onRefresh() {
+                mSrl.setRefreshing(true);
+                mTvRefresh.setVisibility(View.VISIBLE);
+                downloadBoutique();
             }
         });
     }
 
-    private void initView(View layout) {
-        mrvBoutique = (RecyclerView) layout.findViewById(R.id.rvBoutique);
-        mActivity = (MainActivity) getActivity();
-        mLayoutManager = new LinearLayoutManager(mActivity);
-        mrvBoutique.setLayoutManager(mLayoutManager);
-        mBoutiqueList = new ArrayList<>();
-        mBoutiqueAdapter = new BoutiqueAdapter(mActivity, mBoutiqueList);
-        mrvBoutique.setAdapter(mBoutiqueAdapter);
+    @Override
+    protected  void initData() {
+        downloadBoutique();
+    }
+
+    private void downloadBoutique() {
+        NetDao.downloadBuotique(mContext, new OkHttpUtils.OnCompleteListener<BoutiqueBean[]>() {
+            @Override
+            public void onSuccess(BoutiqueBean[] result) {
+                mSrl.setRefreshing(false);
+                mTvRefresh.setVisibility(View.GONE);
+                if(result!=null && result.length>0){
+                    ArrayList<BoutiqueBean> list = ConvertUtils.array2List(result);
+                    mAdapter.initData(list);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                mSrl.setRefreshing(false);
+                mTvRefresh.setVisibility(View.GONE);
+                CommonUtils.showShortToast(error);
+                L.e("error:"+error);
+            }
+        });
+    }
+
+    @Override
+    protected  void initView() {
+        mSrl.setColorSchemeColors(
+                getResources().getColor(R.color.google_blue),
+                getResources().getColor(R.color.google_green),
+                getResources().getColor(R.color.google_red),
+                getResources().getColor(R.color.google_yellow)
+        );
+        llm = new LinearLayoutManager(mContext);
+        mRv.setLayoutManager(llm);
+        mRv.setHasFixedSize(true);
+        mRv.setAdapter(mAdapter);
+        mRv.addItemDecoration(new SpaceItemDecoration(12));
     }
 }

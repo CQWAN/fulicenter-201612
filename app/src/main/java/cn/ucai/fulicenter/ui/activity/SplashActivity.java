@@ -1,18 +1,23 @@
 package cn.ucai.fulicenter.ui.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.model.utils.MFGT;
 
 public class SplashActivity extends AppCompatActivity {
-    int time = 2000;
+    private static final String TAG = SplashActivity .class.getSimpleName();
+
+    private final long sleepTime = 2000;
+    SplashActivity mContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        mContext = this;
     }
 
     @Override
@@ -21,9 +26,9 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                SplashActivity.this.finish();
+                MFGT.gotoMainActivity(SplashActivity.this);
+                finish();
             }
-        }, time);
+        },sleepTime);
     }
 }

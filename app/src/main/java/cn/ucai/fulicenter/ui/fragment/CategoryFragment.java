@@ -1,114 +1,117 @@
 package cn.ucai.fulicenter.ui.fragment;
 
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import cn.ucai.fulicenter.R;
-import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.model.bean.CategoryChildBean;
 import cn.ucai.fulicenter.model.bean.CategoryGroupBean;
-import cn.ucai.fulicenter.model.net.CategoryModel;
-import cn.ucai.fulicenter.model.net.ICategoryModel;
-import cn.ucai.fulicenter.model.net.OnCompleteListener;
-import cn.ucai.fulicenter.model.utils.ResultUtils;
-import cn.ucai.fulicenter.ui.activity.CategoryChildActivity;
-import cn.ucai.fulicenter.ui.adapter.CategoryAdatper;
+import cn.ucai.fulicenter.model.net.NetDao;
+import cn.ucai.fulicenter.model.utils.ConvertUtils;
+import cn.ucai.fulicenter.model.utils.L;
+import cn.ucai.fulicenter.model.utils.OkHttpUtils;
+import cn.ucai.fulicenter.ui.activity.MainActivity;
+import cn.ucai.fulicenter.ui.adapter.CategoryAdapter;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Created by clawpo on 2016/10/20.
  */
-public class CategoryFragment extends Fragment {
-    @BindView(R.id.elvCategory)
-    ExpandableListView elvCategory;
-    List<CategoryGroupBean> mCategoryGroupList;
-    List<List<CategoryChildBean>> mCategoryChildList;
-    CategoryAdatper mCategoryAdapter;
-    Unbinder bind;
-    ICategoryModel mCategoryModel;
-    public CategoryFragment() {
-        // Required empty public constructor
-    }
 
+public class CategoryFragment extends BaseFragment {
 
+    @BindView(R.id.elv_category)
+    ExpandableListView mElvCategory;
+
+    CategoryAdapter mAdapter;
+    MainActivity mContext;
+    ArrayList<CategoryGroupBean> mGroupList;
+    ArrayList<ArrayList<CategoryChildBean>> mChildList;
+
+    int groupCount;
+
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_category, container, false);
-        bind = ButterKnife.bind(this, layout);
-        mCategoryGroupList = new ArrayList<>();
-        mCategoryChildList = new ArrayList<>();
-        setListener();
+        ButterKnife.bind(this, layout);
+        mContext = (MainActivity) getContext();
+        mGroupList = new ArrayList<>();
+        mChildList = new ArrayList<>();
+        mAdapter = new CategoryAdapter(mContext,mGroupList,mChildList);
+        super.onCreateView(inflater, container, savedInstanceState);
         return layout;
     }
 
-    private void setListener() {
-        elvCategory.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                getActivity().startActivity(new Intent(getActivity(),CategoryChildActivity.class)
-                .putExtra(I.CategoryChild.CAT_ID,mCategoryChildList.get(groupPosition).get(childPosition).getId()));
-                return false;
-            }
-        });
-    }
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mCategoryModel = new CategoryModel();
-        downloadGroupCategory();
+    protected void initView() {
+        mElvCategory.setGroupIndicator(null);
+        mElvCategory.setAdapter(mAdapter);
     }
-    private void downloadGroupCategory() {
-        mCategoryModel.loadGroupData(getActivity(), new OnCompleteListener<CategoryGroupBean[]>() {
+
+    @Override
+    protected void initData() {
+        downloadGroup();
+    }
+
+    private void downloadGroup() {
+        NetDao.downloadCategoryGroup(mContext, new OkHttpUtils.OnCompleteListener<CategoryGroupBean[]>() {
             @Override
             public void onSuccess(CategoryGroupBean[] result) {
-                mCategoryGroupList = ResultUtils.array2List(result);
-                for(int i=0;i<mCategoryGroupList.size();i++) {
-                    int parendId = mCategoryGroupList.get(i).getId();
-                    mCategoryChildList.add(new ArrayList<CategoryChildBean>());
-                    downloadChildCategory(parendId,i);
+                if(result!=null && result.length>0){
+                    ArrayList<CategoryGroupBean> groupList = ConvertUtils.array2List(result);
+                    mGroupList.addAll(groupList);
+                    for (int i=0;i<groupList.size();i++){
+                        mChildList.add(new ArrayList<CategoryChildBean>());
+                        CategoryGroupBean g = groupList.get(i);
+                        downloadChild(g.getId(),i);
+                    }
                 }
-                elvCategory.setGroupIndicator(null);
-                mCategoryAdapter = new CategoryAdatper(getActivity(), mCategoryGroupList, mCategoryChildList);
-                elvCategory.setAdapter(mCategoryAdapter);
             }
 
             @Override
             public void onError(String error) {
-                Log.i("main", error);
+                L.e("error="+error);
             }
         });
     }
-    private void downloadChildCategory(int parentId, final int index){
-        mCategoryModel.loadChildData(getActivity(), parentId, new OnCompleteListener<CategoryChildBean[]>() {
+
+    private void downloadChild(int id,final int index) {
+        NetDao.downloadCategoryChild(mContext, id, new OkHttpUtils.OnCompleteListener<CategoryChildBean[]>() {
             @Override
             public void onSuccess(CategoryChildBean[] result) {
-                ArrayList<CategoryChildBean> categoryChildList = ResultUtils.array2List(result);
-                mCategoryChildList.set(index,categoryChildList);
+                groupCount++;
+                if(result!=null && result.length>0) {
+                    ArrayList<CategoryChildBean> childList = ConvertUtils.array2List(result);
+                    mChildList.set(index,childList);
+                }
+                if(groupCount==mGroupList.size()){
+                    mAdapter.initData(mGroupList,mChildList);
+                }
+
             }
+
             @Override
             public void onError(String error) {
-                Log.i("main", error);
+                L.e("error="+error);
             }
         });
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        bind.unbind();
+    protected void setListener() {
+//        mElvCategory.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+//            @Override
+//            public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
+//                return false;
+//            }
+//        });
     }
 }

@@ -1,13 +1,10 @@
 package cn.ucai.fulicenter.ui.fragment;
 
-
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,60 +12,51 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.model.bean.NewGoodsBean;
-import cn.ucai.fulicenter.model.net.INewGoodsModel;
-import cn.ucai.fulicenter.model.net.NewGoodsModel;
-import cn.ucai.fulicenter.model.net.OnCompleteListener;
-import cn.ucai.fulicenter.model.utils.ImageLoader;
-import cn.ucai.fulicenter.model.utils.ResultUtils;
-import cn.ucai.fulicenter.ui.adapter.NewGoodsAdapter;
+import cn.ucai.fulicenter.model.net.NetDao;
+import cn.ucai.fulicenter.model.utils.CommonUtils;
+import cn.ucai.fulicenter.model.utils.ConvertUtils;
+import cn.ucai.fulicenter.model.utils.L;
+import cn.ucai.fulicenter.model.utils.OkHttpUtils;
+import cn.ucai.fulicenter.ui.activity.MainActivity;
+import cn.ucai.fulicenter.ui.adapter.GoodsAdapter;
 import cn.ucai.fulicenter.ui.view.SpaceItemDecoration;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class NewGoodsFragment extends Fragment {
-    static final int ACTION_DOWNLOAD = 1;
-    static final int ACTION_PULL_DOWN = 2;
-    static final int ACTION_PULL_UP = 3;
+
+public class NewGoodsFragment extends BaseFragment {
+    @BindView(R.id.tv_refresh)
+    TextView mTvRefresh;
+    @BindView(R.id.rv)
+    RecyclerView mRv;
+    @BindView(R.id.srl)
     SwipeRefreshLayout mSrl;
-    TextView mtvRefreshHint;
-    RecyclerView mrvNewGoods;
-    ArrayList<NewGoodsBean> mNewGoodsList;
-    GridLayoutManager mLayoutManager;
-    int mPageId = 1;
-    public NewGoodsAdapter mNewGoodsAdapter;
-    INewGoodsModel mNewGoodsModel = new NewGoodsModel();
 
+    MainActivity mContext;
+    GoodsAdapter mAdapter;
+    ArrayList<NewGoodsBean> mList;
+    int pageId = 1;
+    GridLayoutManager glm;
 
-
-    public NewGoodsFragment() {
-        // Required empty public constructor
-    }
-
-
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.fragment_new_goods, container, false);
-        initView(layout);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        L.e("NewGoodsFragment.onCreateView");
+        View layout = inflater.inflate(R.layout.fragment_newgoods, container, false);
+        ButterKnife.bind(this, layout);
+        mContext = (MainActivity) getContext();
+        mList = new ArrayList<>();
+        mAdapter = new GoodsAdapter(mContext,mList);
+        super.onCreateView(inflater,container,savedInstanceState);
         return layout;
     }
-    int catId = 0;
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        // 下载首页并设置监听
-        super.onActivityCreated(savedInstanceState);
-        catId = getActivity().getIntent().getIntExtra(I.Boutique.CAT_ID,catId);
-        Log.e("main", catId+"");
-        mPageId = 1;
-        downloadNewGoodsList(mPageId,ACTION_DOWNLOAD);
-        setListener();
-    }
 
-    private void setListener() {
+    @Override
+    protected void setListener() {
         setPullUpListener();
         setPullDownListener();
     }
@@ -77,92 +65,87 @@ public class NewGoodsFragment extends Fragment {
         mSrl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // 开始下拉刷新
-                ImageLoader.release();
                 mSrl.setRefreshing(true);
-                mtvRefreshHint.setVisibility(View.VISIBLE);
-                mPageId = 1;
-                downloadNewGoodsList(mPageId,ACTION_PULL_DOWN);
+                mTvRefresh.setVisibility(View.VISIBLE);
+                pageId = 1;
+                downloadNewGoods(I.ACTION_PULL_DOWN);
             }
         });
     }
 
-    private void setPullUpListener() {
-        // 开始上拉加载
-        mrvNewGoods.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                int position = mLayoutManager.findLastCompletelyVisibleItemPosition();
-                if (position == mNewGoodsAdapter.getItemCount() - 1 && RecyclerView.SCROLL_STATE_IDLE == newState && mNewGoodsAdapter.isMore()) {
-                    mPageId++;
-                    downloadNewGoodsList(mPageId,ACTION_PULL_UP);
-                }
-            }
-        });
-    }
-    private void downloadNewGoodsList(int mPageId, final int action) {
-        mNewGoodsModel.loadData(getActivity(), catId,mPageId, new OnCompleteListener<NewGoodsBean[]>() {
+    private void downloadNewGoods(final int action) {
+        NetDao.downloadNewGoods(mContext,I.CAT_ID, pageId, new OkHttpUtils.OnCompleteListener<NewGoodsBean[]>() {
             @Override
             public void onSuccess(NewGoodsBean[] result) {
-                mNewGoodsAdapter.setMore(result != null && result.length > 0);
-                if (!mNewGoodsAdapter.isMore()) {
-                    if (action == ACTION_PULL_UP) {
-                        mNewGoodsAdapter.setTextFooter("没有更多数据啦");
+                mSrl.setRefreshing(false);
+                mTvRefresh.setVisibility(View.GONE);
+                mAdapter.setMore(true);
+                if(result!=null && result.length>0){
+                    ArrayList<NewGoodsBean> list = ConvertUtils.array2List(result);
+                    if(action==I.ACTION_DOWNLOAD || action == I.ACTION_PULL_DOWN) {
+                        mAdapter.initData(list);
+                    }else{
+                        mAdapter.addData(list);
                     }
-                    return;
-                }
-                mNewGoodsList = ResultUtils.array2List(result);
-                switch (action) {
-                    case ACTION_DOWNLOAD:
-                        mNewGoodsAdapter.initNewGoodsList(mNewGoodsList);
-                        mNewGoodsAdapter.setTextFooter("加载更多...");
-                        break;
-                    case ACTION_PULL_DOWN:
-                        Log.d("main", "onSuccess: " + mSrl.isRefreshing());
-                        mSrl.setRefreshing(false);
-                        mtvRefreshHint.setVisibility(View.GONE);
-                        mNewGoodsAdapter.initNewGoodsList(mNewGoodsList);
-                        mNewGoodsAdapter.setTextFooter("加载更多");
-                        break;
-                    case ACTION_PULL_UP:
-                        mNewGoodsAdapter.addNewGoodsList(mNewGoodsList);
-                        mNewGoodsAdapter.setTextFooter("加载更多");
-                        break;
+                    if(list.size()<I.PAGE_SIZE_DEFAULT){
+                        mAdapter.setMore(false);
+                    }
+                }else{
+                    mAdapter.setMore(false);
                 }
             }
 
             @Override
             public void onError(String error) {
                 mSrl.setRefreshing(false);
-                Log.e("main", error);
+                mTvRefresh.setVisibility(View.GONE);
+                mAdapter.setMore(false);
+                CommonUtils.showShortToast(error);
+                L.e("error:"+error);
             }
         });
     }
-    private void initView(View layout) {
-        mSrl = (SwipeRefreshLayout) layout.findViewById(R.id.srl);
-        mSrl.setColorSchemeColors(getResources().getColor(R.color.google_blue),
-                getResources().getColor(R.color.google_green),
-                getResources().getColor(R.color.google_red),
-                getResources().getColor(R.color.google_yellow));
-        mtvRefreshHint = (TextView) layout.findViewById(R.id.tvRefreshHint);
-        mrvNewGoods = (RecyclerView) layout.findViewById(R.id.rvNewGoods);
-        mLayoutManager = new GridLayoutManager(getActivity(), I.COLUM_NUM);
-        // 设置页脚居中显示
-        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){
+
+    private void setPullUpListener() {
+        mRv.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public int getSpanSize(int position) {
-                int viewType = mNewGoodsAdapter.getItemViewType(position);
-                if (viewType == 0) {
-                    return 2;
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                int lastPosition = glm.findLastVisibleItemPosition();
+                if(newState == RecyclerView.SCROLL_STATE_IDLE
+                        && lastPosition == mAdapter.getItemCount()-1
+                        && mAdapter.isMore()){
+                    pageId++;
+                    downloadNewGoods(I.ACTION_PULL_UP);
                 }
-                return 1;
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int firstPosition = glm.findFirstVisibleItemPosition();
+                mSrl.setEnabled(firstPosition==0);
             }
         });
-        mrvNewGoods.setLayoutManager(mLayoutManager);
-        mNewGoodsList = new ArrayList<>();
-        mNewGoodsAdapter = new NewGoodsAdapter(getActivity(), mNewGoodsList);
-        mrvNewGoods.setAdapter(mNewGoodsAdapter);
-        mrvNewGoods.addItemDecoration(new SpaceItemDecoration(12));
+    }
+
+    @Override
+    protected void initData() {
+        downloadNewGoods(I.ACTION_DOWNLOAD);
+    }
+
+    @Override
+    protected void initView() {
+        mSrl.setColorSchemeColors(
+                getResources().getColor(R.color.google_blue),
+                getResources().getColor(R.color.google_green),
+                getResources().getColor(R.color.google_red),
+                getResources().getColor(R.color.google_yellow)
+        );
+        glm = new GridLayoutManager(mContext, I.COLUM_NUM);
+        mRv.setLayoutManager(glm);
+        mRv.setHasFixedSize(true);
+        mRv.setAdapter(mAdapter);
+        mRv.addItemDecoration(new SpaceItemDecoration(12));
     }
 }
