@@ -18,11 +18,21 @@ import cn.ucai.fulicenter.ui.view.DisplayUtils;
 public class LoginActivity extends BaseActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
-    @BindView(R.id.password)
-    EditText mPassword;
     @BindView(R.id.username)
     EditText username;
+    @BindView(R.id.password)
+    EditText mPassword;
+
+
     LoginActivity mContext;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
+        mContext = this;
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     protected void initView() {
@@ -38,19 +48,11 @@ public class LoginActivity extends BaseActivity {
     protected void setListener() {
 
     }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
-        mContext = this;
-        super.onCreate(savedInstanceState);
-    }
-
     @OnClick({R.id.btn_login, R.id.btn_register})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_login:
+            case R.id.btn_login: // 点击登录开始登录
+
                 break;
             case R.id.btn_register:
                 MFGT.gotoRegister(this);
