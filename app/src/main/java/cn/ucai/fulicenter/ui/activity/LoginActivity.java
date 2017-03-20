@@ -1,5 +1,6 @@
 package cn.ucai.fulicenter.ui.activity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -9,8 +10,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.FuLiCenterApplication;
+import cn.ucai.fulicenter.application.I;
+import cn.ucai.fulicenter.model.bean.Result;
+import cn.ucai.fulicenter.model.bean.User;
+import cn.ucai.fulicenter.model.dao.SharePrefrenceUtils;
+import cn.ucai.fulicenter.model.dao.UserDao;
+import cn.ucai.fulicenter.model.net.NetDao;
 import cn.ucai.fulicenter.model.utils.CommonUtils;
 import cn.ucai.fulicenter.model.utils.MFGT;
+import cn.ucai.fulicenter.model.utils.OkHttpUtils;
+import cn.ucai.fulicenter.model.utils.ResultUtils;
 import cn.ucai.fulicenter.ui.view.DisplayUtils;
 
 /**
@@ -65,10 +75,49 @@ public class LoginActivity extends BaseActivity {
                 MFGT.gotoRegister(this);
                 break;
         }
-    }
+   }
 
     private void login() { // 开始登录
+        final ProgressDialog pd = new ProgressDialog(mContext);
+        pd.setMessage(getResources().getString(R.string.logining));
+        pd.show();
+        NetDao.login(mContext, userName, password, new OkHttpUtils.OnCompleteListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+                pd.dismiss();
+                Result result = ResultUtils.getResultFromJson(s, User.class);
+                if (result == null) {
+                    CommonUtils.showShortToast(R.string.login_fail);
+                } else {
+                    if (result.isRetMsg()) {
+                        User user = (User) result.getRetData();
+                        UserDao dao = new UserDao(mContext);
+                        boolean isSuccess = dao.saveUser(user);
+                        if (isSuccess) {
+                            SharePrefrenceUtils.getInstence(mContext).saveUser(user.getMuserName());
+                            FuLiCenterApplication.setUser(user);
+                            MFGT.finish(mContext);
+                        } else {
+                            CommonUtils.showShortToast(R.string.user_database_error);
+                        }
+                    } else {
+                        if (result.getRetCode() == I.MSG_LOGIN_UNKNOW_USER) {
+                            CommonUtils.showShortToast(R.string.login_fail_unknow_user);
+                        } else if (result.getRetCode() == I.MSG_LOGIN_ERROR_PASSWORD) {
+                            CommonUtils.showShortToast(R.string.login_fail_error_password);
+                        } else {
+                            CommonUtils.showShortToast(R.string.login_fail);
+                        }
+                    }
+                }
+            }
 
+            @Override
+            public void onError(String error) {
+                pd.dismiss();
+                CommonUtils.showShortToast(error);
+            }
+        });
     }
 
     private boolean checkedInput() { // 登录前检查

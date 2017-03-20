@@ -116,6 +116,8 @@ public class RegisterActivity extends BaseActivity {
     }
     private void register() {
         final ProgressDialog pd = new ProgressDialog(this);
+        pd.setMessage(getResources().getString(R.string.registering));
+        pd.show();
         NetDao.register(this, username, nickname, password, new OkHttpUtils.OnCompleteListener<Result>() {
             @Override
             public void onSuccess(Result result) {
