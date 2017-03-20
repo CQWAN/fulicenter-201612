@@ -14,9 +14,12 @@ import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.application.I;
 import cn.ucai.fulicenter.model.utils.L;
+import cn.ucai.fulicenter.model.utils.MFGT;
 import cn.ucai.fulicenter.ui.fragment.BoutiqueFragment;
+import cn.ucai.fulicenter.ui.fragment.CartFragment;
 import cn.ucai.fulicenter.ui.fragment.CategoryFragment;
 import cn.ucai.fulicenter.ui.fragment.NewGoodsFragment;
+import cn.ucai.fulicenter.ui.fragment.PersonalCenterFragment;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -41,6 +44,8 @@ public class MainActivity extends BaseActivity {
     NewGoodsFragment mNewGoodsFragment;
     BoutiqueFragment mBoutiqueFragment;
     CategoryFragment mCategoryFragment;
+    CartFragment mCartFragment;
+    PersonalCenterFragment mPersonalFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,15 +56,18 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initFragment() {
-        mFragments = new Fragment[3];
+        mFragments = new Fragment[5];
         mNewGoodsFragment = new NewGoodsFragment();
-        mBoutiqueFragment = new BoutiqueFragment();
-        mCategoryFragment = new CategoryFragment();
-//        mCartFragment = new CartFragment();
         mFragments[0] = mNewGoodsFragment;
+        mBoutiqueFragment = new BoutiqueFragment();
         mFragments[1] = mBoutiqueFragment;
+        mCategoryFragment = new CategoryFragment();
         mFragments[2] = mCategoryFragment;
-//        mFragments[3] = mCartFragment;
+        mCartFragment = new CartFragment();
+        mFragments[3] = mCartFragment;
+        mPersonalFragment = new PersonalCenterFragment();
+        mFragments[4] = mPersonalFragment;
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.fragment_container,mNewGoodsFragment)
@@ -73,12 +81,12 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        rbs = new RadioButton[3];
+        rbs = new RadioButton[5];
         rbs[0] = mLayoutNewGood;
         rbs[1] = mLayoutBoutique;
         rbs[2] = mLayoutCategory;
-//        rbs[3] = mLayoutCart;
-//        rbs[4] = mLayoutPersonalCenter;
+        rbs[3] = mLayoutCart;
+        rbs[4] = mLayoutPersonalCenter;
     }
 
     @Override
@@ -102,20 +110,20 @@ public class MainActivity extends BaseActivity {
             case R.id.layout_category:
                 index = 2;
                 break;
-            /*case R.id.layout_cart:
-                        if(FuLiCenterApplication.getUser()==null){
-                            MFGT.gotoLoginFromCart(this);
-                        }else {
-                            index = 3;
-                        }
-                        break;
-                    case R.id.layout_personal_center:
-                        if(FuLiCenterApplication.getUser()==null){
-                            MFGT.gotoLogin(this);
+            case R.id.layout_cart:
+                if(FuLiCenterApplication.getUser()==null){
+                    MFGT.gotoLoginFromCart(this);
+                }else {
+                    index = 3;
+                }
+                break;
+            case R.id.layout_personal_center:
+                if(FuLiCenterApplication.getUser()==null){
+                    MFGT.gotoLogin(this);
                 }else {
                     index = 4;
                 }
-                break;*/
+                break;
         }
         setFragment();
     }
@@ -132,7 +140,6 @@ public class MainActivity extends BaseActivity {
         setRadioButtonStatus();
         currentIndex = index;
     }
-
     private void setRadioButtonStatus() {
         L.e("index="+index);
         for (int i=0;i<rbs.length;i++){
@@ -146,7 +153,6 @@ public class MainActivity extends BaseActivity {
     public void onBackPressed(){
         finish();
     }
-
     @Override
     protected void onResume() {
         super.onResume();

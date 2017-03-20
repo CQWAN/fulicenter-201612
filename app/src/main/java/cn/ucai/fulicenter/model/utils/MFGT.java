@@ -13,7 +13,9 @@ import cn.ucai.fulicenter.model.bean.CategoryChildBean;
 import cn.ucai.fulicenter.ui.activity.BoutiqueChildActivity;
 import cn.ucai.fulicenter.ui.activity.CategoryChildActivity;
 import cn.ucai.fulicenter.ui.activity.GoodsDetailActivity;
+import cn.ucai.fulicenter.ui.activity.LoginActivity;
 import cn.ucai.fulicenter.ui.activity.MainActivity;
+import cn.ucai.fulicenter.ui.activity.RegisterActivity;
 
 public class MFGT {
     public static void finish(Activity activity){
@@ -59,27 +61,28 @@ public class MFGT {
         startActivity(context,intent);
     }
 
-    /*public static void gotoLogin(Activity context){
+    public static void gotoLogin(Activity context){
         Intent intent = new Intent();
         intent.setClass(context,LoginActivity.class);
         startActivityForResult(context,intent,I.REQUEST_CODE_LOGIN);
-    }*/
+    }
 
-    /*public static void gotoLoginFromCart(Activity context){
+    public static void gotoLoginFromCart(Activity context){
         Intent intent = new Intent();
         intent.setClass(context,LoginActivity.class);
         startActivityForResult(context,intent,I.REQUEST_CODE_LOGIN_FROM_CART);
-    }*/
+    }
 
-    /*public static void gotoRegister(Activity context){
+    public static void gotoRegister(Activity context){
         Intent intent = new Intent();
         intent.setClass(context,RegisterActivity.class);
         startActivityForResult(context,intent,I.REQUEST_CODE_REGISTER);
-    }*/
+    }
     public static void startActivityForResult(Activity context,Intent intent,int requestCode){
         context.startActivityForResult(intent,requestCode);
         context.overridePendingTransition(R.anim.push_left_in,R.anim.push_left_out);
     }
+
 
    /* public static void gotoSettings(Activity context){
         startActivity(context, UserProfileActivity.class);

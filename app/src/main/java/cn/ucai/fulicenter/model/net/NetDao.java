@@ -8,6 +8,8 @@ import cn.ucai.fulicenter.model.bean.CategoryChildBean;
 import cn.ucai.fulicenter.model.bean.CategoryGroupBean;
 import cn.ucai.fulicenter.model.bean.GoodsDetailsBean;
 import cn.ucai.fulicenter.model.bean.NewGoodsBean;
+import cn.ucai.fulicenter.model.bean.Result;
+import cn.ucai.fulicenter.model.utils.MD5;
 import cn.ucai.fulicenter.model.utils.OkHttpUtils;
 
 public class NetDao {
@@ -60,7 +62,7 @@ public class NetDao {
                 .targetClass(NewGoodsBean[].class)
                 .execute(listener);
     }
-   /* public static void register(Context context, String username, String nickname, String password, OkHttpUtils.OnCompleteListener<Result> listener){
+    public static void register(Context context, String username, String nickname, String password, OkHttpUtils.OnCompleteListener<Result> listener){
         OkHttpUtils<Result> utils = new OkHttpUtils<>(context);
         utils.setRequestUrl(I.REQUEST_REGISTER)
                 .addParam(I.User.USER_NAME,username)
@@ -69,16 +71,16 @@ public class NetDao {
                 .targetClass(Result.class)
                 .post()
                 .execute(listener);
-    }*/
+    }
 
-    /*public static void login(Context context, String username, String password, OkHttpUtils.OnCompleteListener<String> listener){
+    public static void login(Context context, String username, String password, OkHttpUtils.OnCompleteListener<String> listener){
         OkHttpUtils<String> utils = new OkHttpUtils<>(context);
         utils.setRequestUrl(I.REQUEST_LOGIN)
                 .addParam(I.User.USER_NAME,username)
                 .addParam(I.User.PASSWORD,MD5.getMessageDigest(password))
                 .targetClass(String.class)
                 .execute(listener);
-    }*/
+    }
 
    /* public static void updateNick(Context context, String username, String nick, OkHttpUtils.OnCompleteListener<String> listener){
         OkHttpUtils<String> utils = new OkHttpUtils<>(context);

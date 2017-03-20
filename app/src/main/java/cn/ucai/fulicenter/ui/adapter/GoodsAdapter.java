@@ -24,9 +24,6 @@ import cn.ucai.fulicenter.model.utils.ImageLoader;
 import cn.ucai.fulicenter.model.utils.MFGT;
 import cn.ucai.fulicenter.ui.view.FooterViewHolder;
 
-/**
- * Created by clawpo on 2016/10/17.
- */
 
 public class GoodsAdapter extends Adapter {
     Context mContext;
