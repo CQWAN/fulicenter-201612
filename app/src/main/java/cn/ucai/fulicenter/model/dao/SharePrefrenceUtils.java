@@ -10,12 +10,12 @@ public class SharePrefrenceUtils {
     private SharedPreferences.Editor mEditor;
     public static final String SHARE_KEY_USER_NAME = "share_key_user_name";
 
-    public SharePrefrenceUtils(Context context) {
+    public SharePrefrenceUtils(Context context) { // 狗造
         mSharedPreferences = context.getSharedPreferences(SHARE_NAME,Context.MODE_PRIVATE);
         mEditor = mSharedPreferences.edit();
     }
 
-    public static SharePrefrenceUtils getInstence(Context context){
+    public static SharePrefrenceUtils getInstence(Context context){ // 懒汉式
         if(instance==null){
             instance = new SharePrefrenceUtils(context);
         }
@@ -24,7 +24,7 @@ public class SharePrefrenceUtils {
 
     public void saveUser(String username){
         mEditor.putString(SHARE_KEY_USER_NAME,username);
-        mEditor.commit();
+        mEditor.commit(); // 提交
     }
 
     public String getUser(){
