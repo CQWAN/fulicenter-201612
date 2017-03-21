@@ -36,6 +36,7 @@ public class PersonalCenterFragment extends BaseFragment {
         View layout = View.inflate(getActivity(), R.layout.fragment_personal_center, null);
         ButterKnife.bind(this, layout);
         mContext = (MainActivity) getActivity();
+        super.onCreateView(inflater, container, savedInstanceState);
         return layout;
     }
 

@@ -8,6 +8,7 @@ import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.model.bean.User;
 import cn.ucai.fulicenter.model.dao.UserDao;
+import cn.ucai.fulicenter.model.utils.L;
 import cn.ucai.fulicenter.model.utils.MFGT;
 import cn.ucai.fulicenter.model.utils.SharePrefrenceUtils;
 
@@ -30,7 +31,8 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-               /* User user = FuLiCenterApplication.getUser();
+                // 从SharedPreference首选项中获取数据
+                User user = FuLiCenterApplication.getUser();
                 L.e(TAG,"fulicenter,user="+user);
                 String username = SharePrefrenceUtils.getInstence(mContext).getUser();
                 L.e(TAG,"fulicenter,username="+username);
@@ -41,13 +43,6 @@ public class SplashActivity extends AppCompatActivity {
                     if(user!=null){
                         FuLiCenterApplication.setUser(user);
                     }
-                }*/
-                // 从SharedPreference首选项中获取数据
-                String userName = SharePrefrenceUtils.getInstence(SplashActivity.this).getUser();
-                if (userName != null) {
-                    UserDao userDao = new UserDao(SplashActivity.this);
-                    User user = userDao.getUser(userName);
-                    FuLiCenterApplication.setUser(user);
                 }
                 MFGT.gotoMainActivity(SplashActivity.this);
                 finish();
