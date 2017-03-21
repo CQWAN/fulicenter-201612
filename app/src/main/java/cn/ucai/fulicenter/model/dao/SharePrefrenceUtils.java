@@ -35,4 +35,7 @@ public class SharePrefrenceUtils {
         mEditor.remove(SHARE_KEY_USER_NAME);
         mEditor.commit();
     }
+    // 感觉用数据库是没有必要的
+    // 既然要数据持久化,应该使用首选项一种就足够了
+    // 接下来,就是要将服务端返回并保存到本地的用户数据设置到界面上了
 }

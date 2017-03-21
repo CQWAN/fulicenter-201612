@@ -5,7 +5,11 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
 import cn.ucai.fulicenter.R;
+import cn.ucai.fulicenter.application.FuLiCenterApplication;
+import cn.ucai.fulicenter.model.bean.User;
+import cn.ucai.fulicenter.model.dao.UserDao;
 import cn.ucai.fulicenter.model.utils.MFGT;
+import cn.ucai.fulicenter.model.utils.SharePrefrenceUtils;
 
 public class SplashActivity extends AppCompatActivity {
     private static final String TAG = SplashActivity .class.getSimpleName();
@@ -26,6 +30,25 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+               /* User user = FuLiCenterApplication.getUser();
+                L.e(TAG,"fulicenter,user="+user);
+                String username = SharePrefrenceUtils.getInstence(mContext).getUser();
+                L.e(TAG,"fulicenter,username="+username);
+                if(user==null && username!=null) {
+                    UserDao dao = new UserDao(mContext);
+                    user = dao.getUser(username);
+                    L.e(TAG,"database,user="+user);
+                    if(user!=null){
+                        FuLiCenterApplication.setUser(user);
+                    }
+                }*/
+                // 从SharedPreference首选项中获取数据
+                String userName = SharePrefrenceUtils.getInstence(SplashActivity.this).getUser();
+                if (userName != null) {
+                    UserDao userDao = new UserDao(SplashActivity.this);
+                    User user = userDao.getUser(userName);
+                    FuLiCenterApplication.setUser(user);
+                }
                 MFGT.gotoMainActivity(SplashActivity.this);
                 finish();
             }
