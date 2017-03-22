@@ -58,6 +58,11 @@ public class UserProfileActivity extends BaseActivity {
         }
         showInfo();
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        showInfo();
+    }
 
     private void showInfo() {
         user = FuLiCenterApplication.getUser();

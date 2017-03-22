@@ -82,14 +82,14 @@ public class NetDao {
                 .execute(listener);
     }
 
-   /* public static void updateNick(Context context, String username, String nick, OkHttpUtils.OnCompleteListener<String> listener){
+    public static void upDateUserNick(Context context, String username, String nick, OkHttpUtils.OnCompleteListener<String> listener){
         OkHttpUtils<String> utils = new OkHttpUtils<>(context);
         utils.setRequestUrl(I.REQUEST_UPDATE_USER_NICK)
                 .addParam(I.User.USER_NAME,username)
                 .addParam(I.User.NICK,nick)
                 .targetClass(String.class)
                 .execute(listener);
-    }*/
+    }
 
    /* public static void updateAvatar(Context context, String username, File file, OkHttpUtils.OnCompleteListener<String> listener){
         OkHttpUtils<String> utils = new OkHttpUtils<>(context);
