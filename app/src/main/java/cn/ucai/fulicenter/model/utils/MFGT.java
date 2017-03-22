@@ -16,6 +16,7 @@ import cn.ucai.fulicenter.ui.activity.GoodsDetailActivity;
 import cn.ucai.fulicenter.ui.activity.LoginActivity;
 import cn.ucai.fulicenter.ui.activity.MainActivity;
 import cn.ucai.fulicenter.ui.activity.RegisterActivity;
+import cn.ucai.fulicenter.ui.activity.UpdateNickActivity;
 import cn.ucai.fulicenter.ui.activity.UserProfileActivity;
 
 public class MFGT {
@@ -86,10 +87,9 @@ public class MFGT {
     public static void gotoSettings(Activity context){
         startActivity(context, UserProfileActivity.class);
     }
-
-   /* public static void gotoUpdateNick(Activity context){
+    public static void gotoUpdateNick(Activity context){
         startActivityForResult(context,new Intent(context, UpdateNickActivity.class),I.REQUEST_CODE_NICK);
-    }*/
+    }
 
   /*  public static void gotoCollects(Activity context){
         startActivity(context, CollectsActivity.class);

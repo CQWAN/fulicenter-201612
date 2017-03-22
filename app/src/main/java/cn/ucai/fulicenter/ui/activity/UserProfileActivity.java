@@ -2,6 +2,7 @@ package cn.ucai.fulicenter.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +21,9 @@ import cn.ucai.fulicenter.ui.view.DisplayUtils;
  * Created by LPP on 2017/3/21.
  * 个人用户信息
  * 头像,用户名,昵称和退出按键
+ * 接下来,更新用户头像
+ *  1.当用户点击头像时,开始让用户选择更新方式
+ *  2.开始更新头像数据
  */
 
 public class UserProfileActivity extends BaseActivity {
@@ -75,10 +79,25 @@ public class UserProfileActivity extends BaseActivity {
             return;
         }
     }
+    @OnClick({R.id.layout_user_profile_username,R.id.layout_user_profile_nickname,
+            R.id.layout_user_profile_avatar,R.id.btn_logout})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.layout_user_profile_username:
+                // 更新用户名
+                break;
+            case R.id.layout_user_profile_nickname:
+                // 更新昵称;
+                MFGT.gotoUpdateNick(mContext);
+                break;
+            case R.id.layout_user_profile_avatar:
+                // 更新头像
+                break;
+            case R.id.btn_logout:
+                logout(); // 退出设置界面
+                break;
 
-    @OnClick(R.id.btn_logout)
-    public void onClick() {
-        logout();
+        }
     }
 
     private void logout() {
@@ -89,4 +108,5 @@ public class UserProfileActivity extends BaseActivity {
         }
         finish();
     }
+
 }
