@@ -18,6 +18,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.FuLiCenterApplication;
+import cn.ucai.fulicenter.model.bean.MessageBean;
 import cn.ucai.fulicenter.model.bean.Result;
 import cn.ucai.fulicenter.model.bean.User;
 import cn.ucai.fulicenter.model.dao.UserDao;
@@ -41,12 +42,14 @@ public class PersonalCenterFragment extends BaseFragment {
     TextView mTvUserName;
     @BindView(R.id.center_user_order_lis)
     GridView mCenterUserOrderLis;
+    @BindView(R.id.tv_collect_count)
+    TextView mTvCollectCount;
     User user = null;
     MainActivity mContext;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.fragment_personal_center, container, false);
+        View layout = inflater.inflate(R.layout.fragment_personal_center2, container, false);
         ButterKnife.bind(this, layout);
         mContext = (MainActivity) getActivity();
         super.onCreateView(inflater, container, savedInstanceState);
@@ -62,8 +65,35 @@ public class PersonalCenterFragment extends BaseFragment {
             ImageLoader.setAvatar(ImageLoader.getAvatarUrl(user), mContext, mIvUserAvatar);
             mTvUserName.setText(user.getMuserNick());
             syncUserInfo();
+            syncCollectsCount();
         }
     }
+
+    private void syncCollectsCount() {
+        NetDao.getCollectsCount(mContext, user.getMuserName(), new OkHttpUtils.OnCompleteListener<MessageBean>() {
+            @Override
+            public void onSuccess(MessageBean msg) {
+                if (msg != null && msg.isSuccess()) {
+                    mTvCollectCount.setText(msg.getMsg());
+                } else {
+                    mTvCollectCount.setText(String.valueOf(0));
+                }
+            }
+            @Override
+            public void onError(String error) {
+                mTvCollectCount.setText(String.valueOf(0));
+            }
+        });
+    }
+    @OnClick({R.id.tv_center_settings, R.id.center_user_info})
+    public void gotoSettings() {
+        MFGT.gotoSettings(mContext);
+    }
+   /* @OnClick(R.id.layout_center_collect)
+    public void gotoCollectsList(){
+        MFGT.gotoCollects(mContext);
+    }*/
+
     private void syncUserInfo() {
         NetDao.syncUserInfo(mContext, user.getMuserName(), new OkHttpUtils.OnCompleteListener<String>() {
             @Override
@@ -133,10 +163,5 @@ public class PersonalCenterFragment extends BaseFragment {
     @Override
     protected void setListener() {
 
-    }
-
-    @OnClick({R.id.tv_center_settings, R.id.center_user_info})
-    public void gotoSettings() {
-        MFGT.gotoSettings(mContext);
     }
 }

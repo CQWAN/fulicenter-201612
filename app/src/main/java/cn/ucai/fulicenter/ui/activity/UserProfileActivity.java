@@ -123,8 +123,7 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     private void updateAvatar() {
-        //file=/storage/emulated/0/Android/data/cn.ucai.fulicenter/files/Pictures/a952700
-        //file=/storage/emulated/0/Android/data/cn.ucai.fulicenter/files/Pictures/user_avatar/a952700.jpg
+
         File file = new File(OnSetAvatarListener.getAvatarPath(mContext,
                 user.getMavatarPath()+"/"+user.getMuserName()
                         +I.AVATAR_SUFFIX_JPG));
