@@ -35,8 +35,6 @@ public class FuLiCenterApplication extends Application {
     }
 
     public static User getUser() {
-        /*if (user == null) {
-        }*/
         return user;
     }
 

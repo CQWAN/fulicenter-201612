@@ -18,6 +18,7 @@ import cn.ucai.fulicenter.model.bean.GoodsDetailsBean;
 import cn.ucai.fulicenter.model.bean.MessageBean;
 import cn.ucai.fulicenter.model.bean.User;
 import cn.ucai.fulicenter.model.net.NetDao;
+import cn.ucai.fulicenter.model.utils.AntiShake;
 import cn.ucai.fulicenter.model.utils.CommonUtils;
 import cn.ucai.fulicenter.model.utils.L;
 import cn.ucai.fulicenter.model.utils.MFGT;
@@ -49,6 +50,7 @@ public class GoodsDetailActivity extends BaseActivity {
     boolean isCollected = false;
     @BindView(R.id.iv_good_collect)
     ImageView mIvGoodCollect;
+    AntiShake util = new AntiShake();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +138,7 @@ public class GoodsDetailActivity extends BaseActivity {
 
     @OnClick(R.id.iv_good_collect)
     public void onCollectClick() {
+        if(util.check()) return;
         User user = FuLiCenterApplication.getUser();
         if (user == null) {
             MFGT.gotoLogin(mContext);

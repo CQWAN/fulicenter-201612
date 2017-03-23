@@ -89,10 +89,10 @@ public class PersonalCenterFragment extends BaseFragment {
     public void gotoSettings() {
         MFGT.gotoSettings(mContext);
     }
-   /* @OnClick(R.id.layout_center_collect)
+    @OnClick(R.id.layout_center_collect)
     public void gotoCollectsList(){
         MFGT.gotoCollects(mContext);
-    }*/
+    }
 
     private void syncUserInfo() {
         NetDao.syncUserInfo(mContext, user.getMuserName(), new OkHttpUtils.OnCompleteListener<String>() {
@@ -162,6 +162,5 @@ public class PersonalCenterFragment extends BaseFragment {
 
     @Override
     protected void setListener() {
-
     }
 }

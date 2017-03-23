@@ -12,6 +12,7 @@ import cn.ucai.fulicenter.model.bean.BoutiqueBean;
 import cn.ucai.fulicenter.model.bean.CategoryChildBean;
 import cn.ucai.fulicenter.ui.activity.BoutiqueChildActivity;
 import cn.ucai.fulicenter.ui.activity.CategoryChildActivity;
+import cn.ucai.fulicenter.ui.activity.CollectsActivity;
 import cn.ucai.fulicenter.ui.activity.GoodsDetailActivity;
 import cn.ucai.fulicenter.ui.activity.LoginActivity;
 import cn.ucai.fulicenter.ui.activity.MainActivity;
@@ -91,9 +92,9 @@ public class MFGT {
         startActivityForResult(context,new Intent(context, UpdateNickActivity.class),I.REQUEST_CODE_NICK);
     }
 
-  /*  public static void gotoCollects(Activity context){
+    public static void gotoCollects(Activity context){
         startActivity(context, CollectsActivity.class);
-    }*/
+    }
 
     /*public static void gotoBuy(Activity context,String cartIds){
         Intent intent = new Intent(context, OrderActivity.class).putExtra(I.Cart.ID,cartIds);
