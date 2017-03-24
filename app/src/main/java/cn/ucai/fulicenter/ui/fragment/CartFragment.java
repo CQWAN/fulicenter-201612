@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -20,7 +21,9 @@ import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.model.bean.CartBean;
 import cn.ucai.fulicenter.model.bean.User;
 import cn.ucai.fulicenter.model.net.NetDao;
+import cn.ucai.fulicenter.model.utils.CommonUtils;
 import cn.ucai.fulicenter.model.utils.OkHttpUtils;
+import cn.ucai.fulicenter.model.utils.ResultUtils;
 import cn.ucai.fulicenter.ui.activity.MainActivity;
 import cn.ucai.fulicenter.ui.view.SpaceItemDecoration;
 
@@ -34,25 +37,30 @@ public class CartFragment extends BaseFragment {
     ArrayList<CartBean> mGoodsList;
     LinearLayoutManager mLayoutManager;
     int pageId;
+    CartAdapter mAdapter;
 
     @BindView(R.id.tv_cart_sum_price)
     TextView mTvCartSumPrice;
     @BindView(R.id.tv_cart_save_price)
     TextView mTvCartSavePrice;
     @BindView(R.id.tv_refresh)
-    TextView tvRefresh;
+    TextView mTvRefresh;
     @BindView(R.id.tv_nothing)
     TextView tvNothing;
     @BindView(R.id.rv)
     RecyclerView mRv;
     @BindView(R.id.srl)
     SwipeRefreshLayout mSrl;
+    @BindView(R.id.layout_cart)
+    RelativeLayout mLayoutCart;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View layout = View.inflate(getActivity(), R.layout.fragment_cart, null);
         ButterKnife.bind(this, layout);
         mContext = (MainActivity) getActivity();
+        mGoodsList = new ArrayList<>();
+        mAdapter = new CartAdapter();
         return layout;
     }
 
@@ -74,18 +82,36 @@ public class CartFragment extends BaseFragment {
 
     @Override
     protected void initData() {
+        downloadCart();
+    }
+
+    private void downloadCart() {
         User user = FuLiCenterApplication.getUser();
-        NetDao.downloadCart(mContext, user.getMuserName(), new OkHttpUtils.OnCompleteListener<String>() {
-            @Override
-            public void onSuccess(String result) {
-
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        });
+        if (user != null) {
+            NetDao.downloadCart(mContext, user.getMuserName(), new OkHttpUtils.OnCompleteListener<String>() {
+                @Override
+                public void onSuccess(String s) {
+                    ArrayList<CartBean> list = ResultUtils.getCartFromJson(s);
+                    mSrl.setRefreshing(false);
+                    mTvRefresh.setVisibility(View.GONE);
+                    if (list != null && list.size() > 0) {
+                        mGoodsList.clear();
+                        mGoodsList.addAll(list);
+                        mAdapter.initData(mGoodsList);
+                        setCartLayout(true);
+                    } else {
+                        setCartLayout(false);
+                    }
+                }
+                @Override
+                public void onError(String error) {
+                    setCartLayout(false);
+                    mSrl.setRefreshing(false);
+                    mTvRefresh.setVisibility(View.GONE);
+                    CommonUtils.showShortToast(error);
+                }
+            });
+        }
     }
 
     @Override
