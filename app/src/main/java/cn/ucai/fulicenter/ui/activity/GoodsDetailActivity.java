@@ -211,7 +211,7 @@ public class GoodsDetailActivity extends BaseActivity {
             mIvGoodCollect.setImageResource(R.mipmap.bg_collect_in);
         }
     }
-}
+
 
 //    @OnClick(R.id.iv_good_share)
 //    public void showShare() {
@@ -245,29 +245,28 @@ public class GoodsDetailActivity extends BaseActivity {
 //        oks.show(this);
 //    }
 
-//    @OnClick(R.id.iv_good_cart)
-//    public void addCart(){
-//        User user = FuLiCenterApplication.getUser();
-//        if(user!=null){
-//            NetDao.addCart(mContext, user.getMuserName(), goodsId, new OkHttpUtils.OnCompleteListener<MessageBean>() {
-//                @Override
-//                public void onSuccess(MessageBean result) {
-//                    if(result!=null && result.isSuccess()){
-//                        CommonUtils.showLongToast(R.string.add_goods_success);
-//                    }else {
-//                        CommonUtils.showLongToast(R.string.add_goods_fail);
-//                    }
-//                }
-//
-//                @Override
-//                public void onError(String error) {
-//                    CommonUtils.showLongToast(R.string.add_goods_fail);
-//                    L.e("error="+error);
-//                }
-//            });
-//        }else{
-//            MFGT.gotoLogin(mContext);
-//        }
-//    }
-//
-//}
+    @OnClick(R.id.iv_good_cart)
+    public void addCart(){
+        User user = FuLiCenterApplication.getUser();
+        if(user!=null){
+            NetDao.addCart(mContext, user.getMuserName(), goodsId, new OkHttpUtils.OnCompleteListener<MessageBean>() {
+                @Override
+                public void onSuccess(MessageBean result) {
+                    if(result!=null && result.isSuccess()){
+                        CommonUtils.showLongToast(R.string.add_goods_success);
+                    }else {
+                        CommonUtils.showLongToast(R.string.add_goods_fail);
+                    }
+                }
+
+                @Override
+                public void onError(String error) {
+                    CommonUtils.showLongToast(R.string.add_goods_fail);
+                    L.e("error="+error);
+                }
+            });
+        }else{
+            MFGT.gotoLogin(mContext);
+        }
+    }
+}
