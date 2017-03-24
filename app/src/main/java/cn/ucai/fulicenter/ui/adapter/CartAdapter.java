@@ -125,6 +125,7 @@ public class CartAdapter extends Adapter<CartAdapter.CartViewHolder> {
         }
 
         @OnClick(R.id.iv_cart_del)
+        // 在CartAdpter中设置点击事件,以更新商品数量以及价格计算
         public void delCart(){
             final int position = (int) mIvCartAdd.getTag();
             CartBean cart = mList.get(position);

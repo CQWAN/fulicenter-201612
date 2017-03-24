@@ -119,10 +119,8 @@ public class GoodsDetailActivity extends BaseActivity {
         }
         return urls;
     }
-
     @Override
     protected void initView() {
-
     }
 
     @Override
