@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.ucai.fulicenter.R;
 import cn.ucai.fulicenter.application.FuLiCenterApplication;
 import cn.ucai.fulicenter.application.I;
@@ -27,6 +28,7 @@ import cn.ucai.fulicenter.model.bean.User;
 import cn.ucai.fulicenter.model.net.NetDao;
 import cn.ucai.fulicenter.model.utils.CommonUtils;
 import cn.ucai.fulicenter.model.utils.L;
+import cn.ucai.fulicenter.model.utils.MFGT;
 import cn.ucai.fulicenter.model.utils.OkHttpUtils;
 import cn.ucai.fulicenter.model.utils.ResultUtils;
 import cn.ucai.fulicenter.ui.activity.MainActivity;
@@ -149,14 +151,14 @@ public class CartFragment extends BaseFragment {
         sumPrice();
     }
 
-    /*@OnClick(R.id.tv_cart_buy)
+    @OnClick(R.id.tv_cart_buy)
     public void buy() {
         if(cartIds!=null && !cartIds.equals("") && cartIds.length()>0){
             MFGT.gotoBuy(mContext,cartIds);
         }else{
             CommonUtils.showLongToast(R.string.order_nothing);
         }
-    }*/
+    }
 
     private void sumPrice(){
         cartIds = "";
