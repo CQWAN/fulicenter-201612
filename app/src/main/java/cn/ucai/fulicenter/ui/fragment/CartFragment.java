@@ -184,7 +184,6 @@ public class CartFragment extends BaseFragment {
         return Integer.valueOf(price);
     }
     class updateCartReceiver extends BroadcastReceiver{
-
         @Override
         public void onReceive(Context context, Intent intent) {
             L.e(TAG,"updateCartReceiver...");
