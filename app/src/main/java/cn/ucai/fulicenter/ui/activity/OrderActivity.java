@@ -8,6 +8,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.pingplusplus.android.PingppLog;
+import com.pingplusplus.libone.PaymentHandler;
+import com.pingplusplus.libone.PingppOne;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,7 +35,7 @@ import cn.ucai.fulicenter.model.utils.OkHttpUtils;
 import cn.ucai.fulicenter.model.utils.ResultUtils;
 import cn.ucai.fulicenter.ui.view.DisplayUtils;
 
-public class OrderActivity extends BaseActivity implements PaymentHandler {
+public class OrderActivity extends BaseActivity{
     private static final String TAG = OrderActivity.class.getSimpleName();
 
     @BindView(R.id.ed_order_name)
@@ -195,52 +199,51 @@ public class OrderActivity extends BaseActivity implements PaymentHandler {
         }
 
         //壹收款: 创建支付通道的对话框
-        PingppOne.showPaymentChannels(getSupportFragmentManager(), bill.toString(), URL, this);
-    }
+        PingppOne.showPaymentChannels(OrderActivity.this, bill.toString(), URL, new PaymentHandler() {
+            @Override
+            public void handlePaymentResult(Intent intent) {
+                if (intent != null) {
 
-    @Override
-    public void handlePaymentResult(Intent data) {
-        if (data != null) {
+                    // result：支付结果信息
+                    // code：支付结果码
+                    //-2:用户自定义错误
+                    //-1：失败
+                    // 0：取消
+                    // 1：成功
+                    // 2:应用内快捷支付支付结果
 
-            // result：支付结果信息
-            // code：支付结果码
-            //-2:用户自定义错误
-            //-1：失败
-            // 0：取消
-            // 1：成功
-            // 2:应用内快捷支付支付结果
-
-            L.e(TAG,"code="+data.getExtras().getInt("code"));
-            if (data.getExtras().getInt("code") != 2) {
-                PingppLog.d(data.getExtras().getString("result") + "  " + data.getExtras().getInt("code"));
-            } else {
-                String result = data.getStringExtra("result");
-                try {
-                    JSONObject resultJson = new JSONObject(result);
-                    if (resultJson.has("error")) {
-                        result = resultJson.optJSONObject("error").toString();
-                    } else if (resultJson.has("success")) {
-                        result = resultJson.optJSONObject("success").toString();
+                    L.e(TAG,"code="+intent.getExtras().getInt("code"));
+                    if (intent.getExtras().getInt("code") != 2) {
+                        PingppLog.d(intent.getExtras().getString("result") + "  " + intent.getExtras().getInt("code"));
+                    } else {
+                        String result = intent.getStringExtra("result");
+                        try {
+                            JSONObject resultJson = new JSONObject(result);
+                            if (resultJson.has("error")) {
+                                result = resultJson.optJSONObject("error").toString();
+                            } else if (resultJson.has("success")) {
+                                result = resultJson.optJSONObject("success").toString();
+                            }
+                            L.e(TAG,result);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    L.e(TAG,result);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    int resultCode = intent.getExtras().getInt("code");
+                    switch (resultCode){
+                        case 1:
+                            paySuccess();
+                            CommonUtils.showLongToast("success");
+                            break;
+                        case -1:
+                            CommonUtils.showLongToast(R.string.pingpp_pay_failed);
+                            finish();
+                            break;
+                    }
                 }
             }
-            int resultCode = data.getExtras().getInt("code");
-            switch (resultCode){
-                case 1:
-                    paySuccess();
-                    CommonUtils.showLongToast(R.string.pingpp_title_activity_pay_sucessed);
-                    break;
-                case -1:
-                    CommonUtils.showLongToast(R.string.pingpp_pay_failed);
-                    finish();
-                    break;
-            }
-        }
+        });
     }
-
     private void paySuccess() {
         for (String id:ids){
             NetDao.deleteCart(mContext, Integer.valueOf(id), new OkHttpUtils.OnCompleteListener<MessageBean>() {
