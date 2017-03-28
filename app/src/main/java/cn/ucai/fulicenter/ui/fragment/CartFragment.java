@@ -35,7 +35,6 @@ import cn.ucai.fulicenter.ui.activity.MainActivity;
 import cn.ucai.fulicenter.ui.adapter.CartAdapter;
 import cn.ucai.fulicenter.ui.view.SpaceItemDecoration;
 
-
 public class CartFragment extends BaseFragment {
     private static final String TAG = CartFragment.class.getSimpleName();
     @BindView(R.id.tv_refresh)

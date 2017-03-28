@@ -35,4 +35,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 
+    compile '__local_jars__:G:\\ws_201612\\FuLiCenter\\lib\\pingpp_one\\libs\\libpingppone-2.1.2.jar:unspecified'
 }
